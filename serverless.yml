@@ -1,0 +1,66 @@
+service: roastly-api
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+package:
+  excludeDevDependencies: true
+  exclude:
+    - .git/**
+    - .idea/**
+    - .vscode/**
+    - .tests/**
+    - docs/**
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'local'}
+  region: us-east-1
+  environment:
+    PRODUCTS_TABLE: ${self:service}-${sls:stage}-roastly-products
+    AWS_ACCESS_KEY_ID: dummy
+    AWS_SECRET_ACCESS_KEY: dummy
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:PutItem
+            - dynamodb:GetItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Scan
+          Resource:
+            - arn:aws:dynamodb:${aws:region}:*:table/${self:provider.environment.PRODUCTS_TABLE}
+
+functions: ${file(serverless-dynamic.js)}
+
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.PRODUCTS_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+custom:
+  dynamodb:
+    stages:
+      - local
+    start:
+      port: 8000
+      inMemory: true
+      migrate: true
+  serverless-offline:
+    environment:
+      IS_OFFLINE: true
