@@ -23,6 +23,7 @@ Supports deployment via both:
 
 ## 📁 Project Structure
 
+```
 src/
 ├── config/ # DynamoDB client (local + cloud)
 ├── controllers/ # Lambda handlers
@@ -31,6 +32,7 @@ src/
 ├── models/ # Product schema + Joi validation
 serverless.yml # Serverless config
 template.yaml # SAM deployment config
+```
 
 ---
 
