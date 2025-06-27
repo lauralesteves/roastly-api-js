@@ -1,0 +1,30 @@
+createProduct:
+  handler: src/controllers/products.createHandler
+  events:
+    - http:
+        path: products
+        method: post
+getProduct:
+  handler: src/controllers/products.getHandler
+  events:
+    - http:
+        path: products/{id}
+        method: get
+listProducts:
+  handler: src/controllers/products.listHandler
+  events:
+    - http:
+        path: products
+        method: get
+updateProduct:
+  handler: src/controllers/products.updateHandler
+  events:
+    - http:
+        path: products/{id}
+        method: put
+deleteProduct:
+  handler: src/controllers/products.deleteHandler
+  events:
+    - http:
+        path: products/{id}
+        method: delete
